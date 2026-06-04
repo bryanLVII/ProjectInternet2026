@@ -14,13 +14,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($user && $user["mot_de_passe"] === $password) {
 
         $_SESSION["user"] = $user;
-        $_SESSION["role"] = "client";
+
+        if ($user["type_client"] === "admin") {
+            $_SESSION["role"] = "admin";
+        } else {
+            $_SESSION["role"] = "client";
+        }
 
         header("Location: index.php?page=home");
         exit;
-
-    } else {
-        $error = "Email ou mot de passe incorrect";
     }
 }
 ?>
