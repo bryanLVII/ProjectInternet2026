@@ -25,4 +25,6 @@ class ProduitDAO {
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // Test
 }
