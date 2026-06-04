@@ -7,23 +7,28 @@
 
 <body>
 
-<header style="background:#222; padding:15px; color:white;">
+<header style="background:#222; padding:15px; color:white; display:flex; gap:15px; align-items:center;">
 
-    <a href="index.php?page=home" style="color:white; margin-right:10px;">Accueil</a>
-    <a href="index.php?page=home" style="color:white; margin-right:10px;">Produits</a>
+    <a href="index.php?page=home" style="color:white;">Accueil</a>
+
+    <a href="index.php?page=home" style="color:white;">Produits</a>
 
     <?php if (!isset($_SESSION["user"])): ?>
+
         <a href="index.php?page=login" style="color:lightgreen;">Connexion</a>
+
     <?php else: ?>
-        <span style="margin-left:10px;">
-            Bonjour <?= $_SESSION["user"]["nom"] ?>
+
+        <span>
+            Bonjour <?= htmlspecialchars($_SESSION["user"]["nom"]) ?>
         </span>
 
-        <a href="index.php?page=logout" style="color:red; margin-left:10px;">Logout</a>
-
         <?php if ($_SESSION["role"] === "admin"): ?>
-            <a href="index.php?page=admin" style="color:orange; margin-left:10px;">Admin</a>
+            <a href="index.php?page=admin" style="color:orange;">Admin</a>
         <?php endif; ?>
+
+        <a href="index.php?page=logout" style="color:red;">Logout</a>
+
     <?php endif; ?>
 
 </header>

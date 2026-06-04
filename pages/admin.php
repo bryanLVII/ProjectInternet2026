@@ -20,7 +20,7 @@ $produits = $dao->getAllProduits();
     <div style="border:1px solid black; margin:10px; padding:10px;">
         <h3><?= $p["nom_produit"] ?></h3>
 
-        <a href="index.php?page=edit_product&id=<?= $p["id_produit"] ?>">Modifier</a>
+        <a href="index.php?page=Modification_product&id=<?= $p["id_produit"] ?>">Modifier</a>
         <a href="index.php?page=Supprimer_product&id=<?= $p["id_produit"] ?>">Supprimer</a>
     </div>
 
