@@ -55,4 +55,19 @@ class ProduitDAO {
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getRandomProduits($limit = 3)
+    {
+        $sql = "
+        SELECT * FROM produit
+        ORDER BY RANDOM()
+        LIMIT :lim
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

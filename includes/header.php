@@ -23,6 +23,8 @@
             Bonjour <?= htmlspecialchars($_SESSION["user"]["nom"]) ?>
         </span>
 
+        <a href="index.php?page=panier"> Panier </a>
+
         <?php if ($_SESSION["role"] === "admin"): ?>
             <a href="index.php?page=admin" style="color:orange;">Admin</a>
         <?php endif; ?>
