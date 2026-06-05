@@ -1,81 +1,64 @@
 <?php
-
 if (!isset($_SESSION["user"])) {
     header("Location: index.php?page=login");
     exit;
 }
 
-require_once "dao/PanierDAO.php";
-require_once "dao/ProduitDAO.php";
-
 $panierDAO = new PanierDAO($db);
 $produitDAO = new ProduitDAO($db);
-$reco = $produitDAO->getRandomProduits();
 
 $idClient = $_SESSION["user"]["id_client"];
-
 $produits = $panierDAO->getProduitsPanier($idClient);
-
+$reco = $produitDAO->getRandomProduits();
 $total = 0;
 ?>
 
-<h1>🛒 Mon panier</h1>
+<main class="container">
+    <h1>Mon panier</h1>
 
-<?php if (empty($produits)): ?>
-    <p>Votre panier est vide</p>
-<?php endif; ?>
+    <?php if (empty($produits)): ?>
+        <p>Votre panier est vide</p>
+    <?php endif; ?>
 
-<?php foreach ($produits as $p): ?>
+    <?php foreach ($produits as $p): ?>
+        <?php
+        $sousTotal = $p["prix"] * $p["quantite"];
+        $total += $sousTotal;
+        ?>
 
-    <?php
-    $sousTotal = $p["prix"] * $p["quantite"];
-    $total += $sousTotal;
-    ?>
+        <div class="cart-line">
+            <h3><?= htmlspecialchars($p["nom_produit"]) ?></h3>
 
-    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+            <p>
+                Prix : <?= htmlspecialchars($p["prix"]) ?> €<br>
+                Quantité : <?= htmlspecialchars($p["quantite"]) ?><br>
+                Sous-total : <?= number_format($sousTotal, 2, ",", " ") ?> €
+            </p>
 
-        <h3><?= $p["nom_produit"] ?></h3>
+            <a href="index.php?page=remove_panier&id=<?= $p["id_produit"] ?>">Supprimer</a>
+            <a href="index.php?page=update_panier&id=<?= $p["id_produit"] ?>&action=moins">-</a>
+            <?= htmlspecialchars($p["quantite"]) ?>
+            <a href="index.php?page=update_panier&id=<?= $p["id_produit"] ?>&action=plus">+</a>
+        </div>
+    <?php endforeach; ?>
 
-        <p>
-            Prix : <?= $p["prix"] ?> € <br>
-            Quantité : <?= $p["quantite"] ?> <br>
-            Sous-total : <?= $sousTotal ?> €
-        </p>
+    <?php if (!empty($produits)): ?>
+        <p><a href="index.php?page=clear_panier">Vider le panier</a></p>
+    <?php endif; ?>
 
-        <?php foreach ($reco as $r): ?>
+    <hr>
+    <h2>Total : <?= number_format($total, 2, ",", " ") ?> €</h2>
 
-            <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                <h4><?= $r["nom_produit"] ?></h4>
-                <p><?= $r["prix"] ?> €</p>
-                <a href="index.php?page=add_panier&id=<?= $r["id_produit"] ?>">
-                    Ajouter
-                </a>
-            </div>
-
-        <?php endforeach; ?>
-
-        <a href="index.php?page=remove_panier&id=<?= $p["id_produit"] ?>">
-            ❌ Supprimer
-        </a>
-
-        <a href="index.php?page=update_panier&id=<?= $p['id_produit'] ?>&action=moins">
-            ➖
-        </a>
-
-        <?= $p["quantite"] ?>
-
-        <a href="index.php?page=update_panier&id=<?= $p['id_produit'] ?>&action=plus">
-            ➕
-        </a>
-
-        <a href="index.php?page=clear_panier">
-            🗑 Vider le panier
-        </a>
-
-    </div>
-
-<?php endforeach; ?>
-
-<hr>
-
-<h2>Total : <?= $total ?> €</h2>
+    <?php if (!empty($reco)): ?>
+        <h2>Suggestions</h2>
+        <div class="product-grid">
+            <?php foreach ($reco as $r): ?>
+                <div class="product-card">
+                    <h4><?= htmlspecialchars($r["nom_produit"]) ?></h4>
+                    <p><?= htmlspecialchars($r["prix"]) ?> €</p>
+                    <a href="index.php?page=add_panier&id=<?= $r["id_produit"] ?>">Ajouter</a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</main>

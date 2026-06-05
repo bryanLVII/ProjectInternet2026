@@ -1,20 +1,20 @@
 <?php
-
-if ($_SESSION["role"] !== "admin") {
+if (($_SESSION["role"] ?? "") !== "admin") {
     exit("Accès refusé");
 }
 
+$produitDAO = new ProduitDAO($db);
+$categorieDAO = new CategorieDAO($db);
+$categories = $categorieDAO->getAllCategories();
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    $sql = "INSERT INTO produit (nom_produit, description, prix, stock)
-            VALUES (:nom, :desc, :prix, :stock)";
-
-    $stmt = $db->prepare($sql);
-    $stmt->execute([
-        "nom" => $_POST["nom"],
-        "desc" => $_POST["desc"],
-        "prix" => $_POST["prix"],
-        "stock" => $_POST["stock"]
+    $produitDAO->create([
+        "nom" => $_POST["nom"] ?? "",
+        "description" => $_POST["desc"] ?? "",
+        "prix" => $_POST["prix"] ?? 0,
+        "stock" => $_POST["stock"] ?? 0,
+        "marque" => $_POST["marque"] ?? "",
+        "categorie" => $_POST["categorie"] ?? "",
     ]);
 
     header("Location: index.php?page=admin");
@@ -22,12 +22,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 
-<h1>Ajouter produit</h1>
+<main class="container">
+    <h1>Ajouter produit</h1>
 
-<form method="POST">
-    <input name="nom" placeholder="Nom"><br>
-    <input name="desc" placeholder="Description"><br>
-    <input name="prix" placeholder="Prix"><br>
-    <input name="stock" placeholder="Stock"><br>
-    <button>Ajouter</button>
-</form>
+    <form method="POST">
+        <input name="nom" placeholder="Nom" required><br>
+        <input name="desc" placeholder="Description"><br>
+        <input name="prix" placeholder="Prix" type="number" step="0.01" required><br>
+        <input name="stock" placeholder="Stock" type="number" required><br>
+        <input name="marque" placeholder="Marque"><br>
+        <select name="categorie">
+            <option value="">Sans catégorie</option>
+            <?php foreach ($categories as $categorie): ?>
+                <option value="<?= $categorie["id_categorie"] ?>">
+                    <?= htmlspecialchars($categorie["nom_categorie"]) ?>
+                </option>
+            <?php endforeach; ?>
+        </select><br>
+        <button>Ajouter</button>
+    </form>
+</main>

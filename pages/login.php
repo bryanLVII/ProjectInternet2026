@@ -1,38 +1,33 @@
 <?php
-require_once "dao/ClientDAO.php";
-
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+    $email = $_POST["email"] ?? "";
+    $password = $_POST["password"] ?? "";
 
     $dao = new ClientDAO($db);
     $user = $dao->getByEmail($email);
 
     if ($user && $user["mot_de_passe"] === $password) {
-
         $_SESSION["user"] = $user;
-
-        if ($user["type_client"] === "admin") {
-            $_SESSION["role"] = "admin";
-        } else {
-            $_SESSION["role"] = "client";
-        }
+        $_SESSION["role"] = $user["type_client"] === "admin" ? "admin" : "client";
 
         header("Location: index.php?page=home");
         exit;
     }
+
+    $error = "Email ou mot de passe incorrect.";
 }
 ?>
 
-<h1>Connexion</h1>
+<main class="container">
+    <h1>Connexion</h1>
 
-<form method="POST">
-    <input type="email" name="email" placeholder="Email"><br>
-    <input type="password" name="password" placeholder="Mot de passe"><br>
-    <button type="submit">Se connecter</button>
-</form>
+    <form method="POST">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Mot de passe" required><br>
+        <button type="submit">Se connecter</button>
+    </form>
 
-<p style="color:red;"><?= $error ?></p>
+    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+</main>

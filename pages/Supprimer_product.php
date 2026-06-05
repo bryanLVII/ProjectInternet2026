@@ -1,14 +1,14 @@
 <?php
-
-if ($_SESSION["role"] !== "admin") {
+if (($_SESSION["role"] ?? "") !== "admin") {
     exit("Accès refusé");
 }
 
-$id = $_GET["id"];
+$id = $_GET["id"] ?? null;
 
-$sql = "DELETE FROM produit WHERE id_produit = :id";
-$stmt = $db->prepare($sql);
-$stmt->execute(["id" => $id]);
+if ($id) {
+    $produitDAO = new ProduitDAO($db);
+    $produitDAO->delete($id);
+}
 
 header("Location: index.php?page=admin");
 exit;

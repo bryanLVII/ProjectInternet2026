@@ -1,73 +1,120 @@
 <?php
 
-class ProduitDAO {
+class ProduitDAO
+{
+    private PDO $db;
 
-    private $db;
-
-    public function __construct($db) {
+    public function __construct(PDO $db)
+    {
         $this->db = $db;
     }
 
-    // recuperation de produits
-    public function getAllProduits() {
-        $sql = "SELECT * FROM produit ORDER BY id_produit DESC";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getAllProduits()
+    {
+        return $this->db->query("SELECT * FROM produit ORDER BY id_produit DESC")
+            ->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getProduitById($id) {
-        $sql = "SELECT * FROM produit WHERE id_produit = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
+    public function getProduitById($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM produit WHERE id_produit = :id");
+        $stmt->execute(["id" => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function searchProduits($keyword) {
+    public function search($keyword)
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM produit
+            WHERE nom_produit ILIKE :k
+               OR description ILIKE :k
+               OR marque ILIKE :k
+            ORDER BY nom_produit
+        ");
 
-        $sql = "SELECT * FROM produit 
-            WHERE nom_produit ILIKE :k";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "k" => "%$keyword%"
-        ]);
-
+        $stmt->execute(["k" => "%$keyword%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getProduitsByCategorie($idCategorie)
+    public function searchProduits($keyword)
     {
-        $sql = "
-        SELECT *
-        FROM produit
-        WHERE id_categorie = :id
-    ";
+        return $this->search($keyword);
+    }
 
-        $stmt = $this->db->prepare($sql);
+    public function getByCategorie($id)
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM produit
+            WHERE id_categorie = :id
+            ORDER BY nom_produit
+        ");
 
-        $stmt->execute([
-            "id" => $idCategorie
-        ]);
-
+        $stmt->execute(["id" => $id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProduitsByCategorie($id)
+    {
+        return $this->getByCategorie($id);
     }
 
     public function getRandomProduits($limit = 3)
     {
-        $sql = "
-        SELECT * FROM produit
-        ORDER BY RANDOM()
-        LIMIT :lim
-    ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt = $this->db->prepare("
+            SELECT * FROM produit
+            ORDER BY RANDOM()
+            LIMIT :lim
+        ");
+        $stmt->bindValue(":lim", $limit, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function create(array $data)
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO produit (nom_produit, description, prix, stock, marque, id_categorie)
+            VALUES (:nom, :description, :prix, :stock, :marque, :categorie)
+        ");
+
+        $stmt->execute([
+            "nom" => $data["nom"],
+            "description" => $data["description"],
+            "prix" => $data["prix"],
+            "stock" => $data["stock"],
+            "marque" => $data["marque"] ?: null,
+            "categorie" => $data["categorie"] ?: null,
+        ]);
+    }
+
+    public function update($id, array $data)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE produit
+            SET nom_produit = :nom,
+                description = :description,
+                prix = :prix,
+                stock = :stock,
+                marque = :marque,
+                id_categorie = :categorie
+            WHERE id_produit = :id
+        ");
+
+        $stmt->execute([
+            "nom" => $data["nom"],
+            "description" => $data["description"],
+            "prix" => $data["prix"],
+            "stock" => $data["stock"],
+            "marque" => $data["marque"] ?: null,
+            "categorie" => $data["categorie"] ?: null,
+            "id" => $id,
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $stmt = $this->db->prepare("DELETE FROM produit WHERE id_produit = :id");
+        $stmt->execute(["id" => $id]);
     }
 }

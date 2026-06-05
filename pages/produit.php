@@ -1,10 +1,6 @@
 <?php
-
-require_once "dao/ProduitDAO.php";
-
 $dao = new ProduitDAO($db);
-
-$id = $_GET['id'] ?? null;
+$id = $_GET["id"] ?? null;
 
 if (!$id) {
     echo "Produit introuvable";
@@ -19,9 +15,12 @@ if (!$produit) {
 }
 ?>
 
-<h1><?= $produit['nom_produit'] ?></h1>
+<main class="container">
+    <h1><?= htmlspecialchars($produit["nom_produit"]) ?></h1>
 
-<p><?= $produit['description'] ?></p>
-<p><b><?= $produit['prix'] ?> €</b></p>
-<p>Stock : <?= $produit['stock'] ?></p>
-<p>Marque : <?= $produit['marque'] ?></p>
+    <p><?= htmlspecialchars($produit["description"] ?? "") ?></p>
+    <p><b><?= htmlspecialchars($produit["prix"]) ?> €</b></p>
+    <p>Stock : <?= htmlspecialchars($produit["stock"]) ?></p>
+    <p>Marque : <?= htmlspecialchars($produit["marque"] ?? "") ?></p>
+    <p><a href="index.php?page=add_panier&id=<?= $produit["id_produit"] ?>">Ajouter au panier</a></p>
+</main>
