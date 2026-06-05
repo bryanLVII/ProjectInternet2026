@@ -26,5 +26,33 @@ class ProduitDAO {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Test
+    public function searchProduits($keyword) {
+
+        $sql = "SELECT * FROM produit 
+            WHERE nom_produit ILIKE :k";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            "k" => "%$keyword%"
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getProduitsByCategorie($idCategorie)
+    {
+        $sql = "
+        SELECT *
+        FROM produit
+        WHERE id_categorie = :id
+    ";
+
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->execute([
+            "id" => $idCategorie
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
