@@ -43,7 +43,10 @@ $total = 0;
     <?php endforeach; ?>
 
     <?php if (!empty($produits)): ?>
-        <p><a href="index.php?page=clear_panier">Vider le panier</a></p>
+        <p>
+            <a href="index.php?page=clear_panier">Vider le panier</a>
+            <a class="button-link" href="index.php?page=confirmer_commande">Confirmer la commande</a>
+        </p>
     <?php endif; ?>
 
     <hr>

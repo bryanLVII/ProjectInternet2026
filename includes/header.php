@@ -17,6 +17,7 @@
     <?php else: ?>
         Bonjour <?= htmlspecialchars($_SESSION["user"]["nom"]) ?>
 
+        <a href="index.php?page=profil">Profil</a>
         <a href="index.php?page=panier">Panier</a>
 
         <?php if (($_SESSION["role"] ?? "") === "admin"): ?>

@@ -1,10 +1,9 @@
-INSERT INTO client
-(nom, email, mot_de_passe, type_client, credits_fidelite)
+INSERT INTO administrateur
+(nom, email, mot_de_passe, role)
 VALUES
 (
-'Jean Dupont',
-'client@test.be',
-'1234',
-'Particulier',
-150
+'Admin Principal',
+'admin@test.be',
+'admin123',
+'superadmin'
 );

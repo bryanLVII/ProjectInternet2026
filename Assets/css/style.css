@@ -56,3 +56,37 @@ button {
     object-fit: cover;
     background: #eee;
 }
+
+.button-link,
+button {
+    display: inline-block;
+    border: 0;
+    background: #1f6feb;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.button-link {
+    padding: 8px 12px;
+    margin-left: 8px;
+}
+
+.admin-section {
+    margin-top: 24px;
+}
+
+.form-panel {
+    max-width: 420px;
+    padding: 16px;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.success {
+    color: #0a7a2f;
+}
+
+.error {
+    color: #b42318;
+}

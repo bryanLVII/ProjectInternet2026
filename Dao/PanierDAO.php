@@ -96,7 +96,7 @@ class PanierDAO
     public function getProduitsPanier($idClient)
     {
         $stmt = $this->db->prepare("
-            SELECT p.id_produit, p.nom_produit, p.prix, pp.quantite
+            SELECT p.id_produit, p.nom_produit, p.prix, p.stock, pp.quantite
             FROM panier pa
             JOIN panier_produit pp ON pa.id_panier = pp.id_panier
             JOIN produit p ON p.id_produit = pp.id_produit

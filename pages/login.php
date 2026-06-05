@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($user && $user["mot_de_passe"] === $password) {
         $_SESSION["user"] = $user;
-        $_SESSION["role"] = $user["type_client"] === "admin" ? "admin" : "client";
+        $_SESSION["role"] = strtolower($user["type_client"]) === "admin" ? "admin" : "client";
 
         header("Location: index.php?page=home");
         exit;
