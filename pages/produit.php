@@ -9,6 +9,38 @@ if (!$id) {
 
 $produit = $dao->getProduitById($id);
 
+$avisDAO = new AvisDAO($db);
+
+if (
+        $_SERVER["REQUEST_METHOD"] === "POST"
+        && isset($_SESSION["user"])
+        && ($_SESSION["role"] ?? "") === "client"
+) {
+
+    $note = (int)($_POST["note"] ?? 0);
+    $commentaire = trim($_POST["commentaire"] ?? "");
+
+    if (
+            $note >= 1
+            && $note <= 5
+            && $commentaire !== ""
+            && !$avisDAO->clientADejaAvis($_SESSION["user"]["id_client"], $id)
+    ) {
+
+        $avisDAO->addAvis(
+                $_SESSION["user"]["id_client"],
+                $id,
+                $note,
+                $commentaire
+        );
+
+        header("Location: index.php?page=produit&id=" . $id);
+        exit;
+    }
+}
+
+$avis = $avisDAO->getAvisByProduit($id);
+
 if (!$produit) {
     echo "Produit inexistant";
     exit;
@@ -28,5 +60,87 @@ if (!$produit) {
                 Ajouter au panier
             </a>
         </p>
+    <?php endif; ?>
+    <hr>
+
+    <h2>Avis clients</h2>
+
+    <?php if (empty($avis)): ?>
+        <p>Aucun avis pour le moment.</p>
+    <?php endif; ?>
+
+    <?php foreach ($avis as $a): ?>
+
+        <div class="admin-line">
+
+            <strong><?= htmlspecialchars($a["nom"]) ?></strong>
+
+            - Note : <?= htmlspecialchars($a["note"]) ?>/5
+
+            <p>
+                <?= nl2br(htmlspecialchars($a["commentaire"])) ?>
+            </p>
+
+        </div>
+
+    <?php endforeach; ?>
+
+    <?php if (
+            isset($_SESSION["user"])
+            && ($_SESSION["role"] ?? "") === "client"
+    ): ?>
+
+        <hr>
+
+        <h3>Laisser un avis</h3>
+
+        <form method="POST">
+
+            <label>Note</label><br>
+
+            <select name="note" required>
+                <option value="5">5/5</option>
+                <option value="4">4/5</option>
+                <option value="3">3/5</option>
+                <option value="2">2/5</option>
+                <option value="1">1/5</option>
+            </select>
+
+            <br><br>
+
+            <textarea
+                    name="commentaire"
+                    rows="4"
+                    cols="50"
+                    required
+            ></textarea>
+
+            <br><br>
+
+            <button type="submit">
+                Publier mon avis
+            </button>
+
+        </form>
+
+    <?php endif; ?>
+    <?php if (
+            isset($_SESSION["user"])
+            && ($_SESSION["role"] ?? "") === "client"
+            && $_SESSION["user"]["id_client"] == $a["id_client"]
+    ): ?>
+
+        <a href="index.php?page=edit_avis&id=<?= $a["id_avis"] ?>">
+            Modifier
+        </a>
+
+    <?php endif; ?>
+    <?php if (($_SESSION["role"] ?? "") === "admin"): ?>
+
+        <a href="index.php?page=supprimer_avis&id=<?= $a["id_avis"] ?>"
+           onclick="return confirm('Supprimer cet avis ?')">
+            Supprimer
+        </a>
+
     <?php endif; ?>
 </main>
