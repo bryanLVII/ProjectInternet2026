@@ -22,5 +22,11 @@ if (!$produit) {
     <p><b><?= htmlspecialchars($produit["prix"]) ?> €</b></p>
     <p>Stock : <?= htmlspecialchars($produit["stock"]) ?></p>
     <p>Marque : <?= htmlspecialchars($produit["marque"] ?? "") ?></p>
-    <p><a href="index.php?page=add_panier&id=<?= $produit["id_produit"] ?>">Ajouter au panier</a></p>
+    <?php if (($_SESSION["role"] ?? "") === "client"): ?>
+        <p>
+            <a href="index.php?page=add_panier&id=<?= $produit["id_produit"] ?>">
+                Ajouter au panier
+            </a>
+        </p>
+    <?php endif; ?>
 </main>

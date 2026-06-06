@@ -1,6 +1,7 @@
 <?php
-if (!isset($_SESSION["user"])) {
-    header("Location: index.php?page=login");
+
+if ($_SESSION["role"] !== "client") {
+    echo "Le panier est réservé aux clients.";
     exit;
 }
 

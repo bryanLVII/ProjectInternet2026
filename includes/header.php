@@ -10,7 +10,6 @@
 
 <header style="background:#222; padding:15px; color:white;">
     <a href="index.php?page=home">Accueil</a>
-    <a href="index.php?page=home">Produits</a>
 
     <?php if (!isset($_SESSION["user"])): ?>
 
@@ -20,10 +19,14 @@
 
         Bonjour <?= $_SESSION["user"]["nom"] ?>
 
-        <a href="index.php?page=panier">Panier</a>
+        <?php if ($_SESSION["role"] !== "admin"): ?>
+            <a href="index.php?page=panier">Panier</a>
+            <a href="index.php?page=profil">Profil</a>
+        <?php endif; ?>
 
         <?php if ($_SESSION["role"] === "admin"): ?>
             <a href="index.php?page=admin">Admin</a>
+            <a href="index.php?page=profil">Profil</a>
         <?php endif; ?>
 
         <a href="index.php?page=logout">Logout</a>

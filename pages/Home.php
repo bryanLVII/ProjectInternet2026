@@ -55,9 +55,13 @@ if ($categorieChoisie) {
                 <p><b><?= htmlspecialchars($p["prix"]) ?> €</b></p>
                 <small>Stock : <?= htmlspecialchars($p["stock"]) ?></small>
 
-                <p>
-                    <a href="index.php?page=add_panier&id=<?= $p["id_produit"] ?>">Ajouter au panier</a>
-                </p>
+                <?php if (($_SESSION["role"] ?? "") !== "admin"): ?>
+                    <p>
+                        <a href="index.php?page=add_panier&id=<?= $p["id_produit"] ?>">
+                            Ajouter au panier
+                        </a>
+                    </p>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     </div>

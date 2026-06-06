@@ -28,11 +28,15 @@ class ClientDAO
 
     public function getAll()
     {
-        return $this->db->query("
-            SELECT id_client, nom, email, type_client, credits_fidelite
-            FROM client
-            ORDER BY id_client DESC
-        ")->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare("
+        SELECT id_client, nom, email, type_client, credits_fidelite
+        FROM client
+        WHERE type_client != 'admin'
+        ORDER BY id_client DESC
+    ");
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function updateProfile($id, $nom, $email, $password = "")
@@ -67,6 +71,18 @@ class ClientDAO
             "nom" => $nom,
             "email" => $email,
             "id" => $id,
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $stmt = $this->db->prepare("
+        DELETE FROM client
+        WHERE id_client = :id
+    ");
+
+        $stmt->execute([
+            "id" => $id
         ]);
     }
 }
