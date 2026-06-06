@@ -114,7 +114,18 @@ class ProduitDAO
 
     public function delete($id)
     {
-        $stmt = $this->db->prepare("DELETE FROM produit WHERE id_produit = :id");
+        // 1. supprimer les avis liés
+        $stmt = $this->db->prepare("
+        DELETE FROM avis
+        WHERE id_produit = :id
+    ");
+        $stmt->execute(["id" => $id]);
+
+        // 2. supprimer le produit
+        $stmt = $this->db->prepare("
+        DELETE FROM produit
+        WHERE id_produit = :id
+    ");
         $stmt->execute(["id" => $id]);
     }
 }

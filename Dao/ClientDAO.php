@@ -76,14 +76,20 @@ class ClientDAO
 
     public function delete($id)
     {
+        // supprimer dépendances AVANT client
+
+        $this->db->prepare("DELETE FROM avis WHERE id_client = :id")
+            ->execute(["id" => $id]);
+
+        $this->db->prepare("DELETE FROM commande WHERE id_client = :id")
+            ->execute(["id" => $id]);
+
         $stmt = $this->db->prepare("
         DELETE FROM client
         WHERE id_client = :id
     ");
 
-        $stmt->execute([
-            "id" => $id
-        ]);
+        $stmt->execute(["id" => $id]);
     }
 
     public function createClient($nom, $email, $password)
