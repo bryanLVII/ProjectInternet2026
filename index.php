@@ -34,6 +34,7 @@ $routes = [
     "Ajout_product" => "Ajout_product.php",
     "Modification_product" => "Modification_product.php",
     "Supprimer_product" => "Supprimer_product.php",
+    "register" => "register.php",
 ];
 
 include __DIR__ . "/includes/header.php";

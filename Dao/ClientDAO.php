@@ -85,4 +85,18 @@ class ClientDAO
             "id" => $id
         ]);
     }
+
+    public function createClient($nom, $email, $password)
+    {
+        $stmt = $this->db->prepare("
+        INSERT INTO client (nom, email, mot_de_passe, type_client, credits_fidelite)
+        VALUES (:nom, :email, :password, 'Particulier', 0)
+    ");
+
+        $stmt->execute([
+            "nom" => $nom,
+            "email" => $email,
+            "password" => $password
+        ]);
+    }
 }

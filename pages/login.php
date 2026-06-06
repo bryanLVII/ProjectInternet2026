@@ -53,6 +53,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     </form>
 
+    <p>
+        Pas de compte ?
+        <a href="index.php?page=register">Créer un compte</a>
+    </p>
+
     <p style="color:red;">
         <?= htmlspecialchars($error) ?>
     </p>
