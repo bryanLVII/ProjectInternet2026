@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // 1. Cherche client
     $user = $clientDAO->getByEmail($email);
 
-    if ($user && $user["mot_de_passe"] === $password) {
+    if ($user && password_verify($password, $user["mot_de_passe"])) {
 
         $_SESSION["user"] = $user;
         $_SESSION["role"] = "client";
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // 2. Cherche admin
     $admin = $adminDAO->getByEmail($email);
 
-    if ($admin && $admin["mot_de_passe"] === $password) {
+    if ($admin && password_verify($password, $admin["mot_de_passe"])) {
 
         $_SESSION["user"] = $admin;
         $_SESSION["role"] = "admin";

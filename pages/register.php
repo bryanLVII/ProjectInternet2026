@@ -21,7 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $error = "Email déjà utilisé.";
         } else {
 
-            $clientDAO->createClient($nom, $email, $password);
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $clientDAO->createClient($nom, $email, $passwordHash);
 
             $success = "Compte créé ! Vous pouvez vous connecter.";
 
