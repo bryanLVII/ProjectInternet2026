@@ -1,18 +1,21 @@
-Ce fichier est une fichier uniquement à but informative.
-Il contient principalement :
+Informations de test
 
-connection du compte Jean :
-- Jean@hotmail.be
-- 1234
+Compte client :
+- Email : Jean@hotmail.be
+- Mot de passe : 1234
 
-connection admin :
-- admin@test.be
-- admin123
+Compte administrateur :
+- Email : admin@test.be
+- Mot de passe : admin123
 
-Certaine chose sont important :
-- Si vous êtes sur le compte client, vous ne pouvez pas delet votre commande
-(une ajout futur quand le site seras sous une autre version)
-- Si vous êtes sur le compte admin, vous ne pouvez pas delet les commandes
-(une ajout futur quand le site seras sous une autre version)
+Organisation du projet :
+- Admin/Dao : acces aux donnees des administrateurs
+- Admin/Pages : pages reservees aux administrateurs
+- Client/Dao : acces aux donnees client, panier et commandes
+- Client/Pages : pages reservees aux clients
+- Dao : donnees partagees entre client et admin, comme produits, categories et avis
 
-Coté admin comme client, y a beaucoup de fonctionnalité.
+Commandes :
+- Le client peut ouvrir une commande depuis son profil.
+- La page commande affiche les articles achetes.
+- Le client peut annuler une commande si elle n'est pas deja annulee.

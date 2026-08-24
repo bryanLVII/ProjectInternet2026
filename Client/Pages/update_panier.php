@@ -1,17 +1,15 @@
 <?php
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user"]) || ($_SESSION["role"] ?? "") !== "client") {
     header("Location: index.php?page=login");
     exit;
 }
 
-$panierDAO = new PanierDAO($db);
-
-$idClient = $_SESSION["user"]["id_client"];
 $idProduit = $_GET["id"] ?? null;
 $action = $_GET["action"] ?? "";
 
 if ($idProduit && in_array($action, ["plus", "moins"], true)) {
-    $panierDAO->updateQuantity($idClient, $idProduit, $action);
+    $panierDAO = new PanierDAO($db);
+    $panierDAO->updateQuantity($_SESSION["user"]["id_client"], $idProduit, $action);
 }
 
 header("Location: index.php?page=panier");

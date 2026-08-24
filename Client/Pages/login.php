@@ -1,33 +1,25 @@
 <?php
-
 $error = "";
-
-// DAO
 $clientDAO = new ClientDAO($db);
 $adminDAO = new AdministrateurDAO($db);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    $email = $_POST["email"] ?? "";
+    $email = trim($_POST["email"] ?? "");
     $password = $_POST["password"] ?? "";
 
-    // 1. Cherche client
-    $user = $clientDAO->getByEmail($email);
+    $client = $clientDAO->getByEmail($email);
 
-    if ($user && password_verify($password, $user["mot_de_passe"])) {
-
-        $_SESSION["user"] = $user;
+    if ($client && password_verify($password, $client["mot_de_passe"])) {
+        $_SESSION["user"] = $client;
         $_SESSION["role"] = "client";
 
         header("Location: index.php?page=home");
         exit;
     }
 
-    // 2. Cherche admin
     $admin = $adminDAO->getByEmail($email);
 
     if ($admin && password_verify($password, $admin["mot_de_passe"])) {
-
         $_SESSION["user"] = $admin;
         $_SESSION["role"] = "admin";
 
@@ -40,26 +32,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <main class="container">
-
     <h1>Connexion</h1>
 
-    <form method="POST">
+    <?php if ($error): ?>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
 
-        <input type="email" name="email" placeholder="Email" required><br>
+    <form method="POST" class="form-panel">
+        <label>
+            Email<br>
+            <input type="email" name="email" required>
+        </label><br>
 
-        <input type="password" name="password" placeholder="Mot de passe" required><br>
+        <label>
+            Mot de passe<br>
+            <input type="password" name="password" required>
+        </label><br>
 
         <button type="submit">Se connecter</button>
-
     </form>
 
     <p>
         Pas de compte ?
-        <a href="index.php?page=register">Créer un compte</a>
+        <a href="index.php?page=register">Creer un compte</a>
     </p>
-
-    <p style="color:red;">
-        <?= htmlspecialchars($error) ?>
-    </p>
-
 </main>

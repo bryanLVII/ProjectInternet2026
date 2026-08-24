@@ -12,14 +12,11 @@ class AdministrateurDAO
     public function getByEmail($email)
     {
         $stmt = $this->db->prepare("
-            SELECT * 
-            FROM administrateur 
+            SELECT id_admin, nom, email, mot_de_passe, role
+            FROM administrateur
             WHERE email = :email
         ");
-
-        $stmt->execute([
-            "email" => $email
-        ]);
+        $stmt->execute(["email" => $email]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -27,14 +24,11 @@ class AdministrateurDAO
     public function getById($id)
     {
         $stmt = $this->db->prepare("
-        SELECT id_admin, nom, email, mot_de_passe, role
-        FROM administrateur
-        WHERE id_admin = :id
-    ");
-
-        $stmt->execute([
-            "id" => $id
-        ]);
+            SELECT id_admin, nom, email, mot_de_passe, role
+            FROM administrateur
+            WHERE id_admin = :id
+        ");
+        $stmt->execute(["id" => $id]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -43,33 +37,34 @@ class AdministrateurDAO
     {
         if ($password !== "") {
             $stmt = $this->db->prepare("
-            UPDATE administrateur
-            SET nom = :nom,
-                email = :email,
-                mot_de_passe = :password
-            WHERE id_admin = :id
-        ");
+                UPDATE administrateur
+                SET nom = :nom,
+                    email = :email,
+                    mot_de_passe = :password
+                WHERE id_admin = :id
+            ");
 
             $stmt->execute([
                 "nom" => $nom,
                 "email" => $email,
-                "password" => $password,
-                "id" => $id
+                "password" => password_hash($password, PASSWORD_DEFAULT),
+                "id" => $id,
             ]);
 
-        } else {
-            $stmt = $this->db->prepare("
+            return;
+        }
+
+        $stmt = $this->db->prepare("
             UPDATE administrateur
             SET nom = :nom,
                 email = :email
             WHERE id_admin = :id
         ");
 
-            $stmt->execute([
-                "nom" => $nom,
-                "email" => $email,
-                "id" => $id
-            ]);
-        }
+        $stmt->execute([
+            "nom" => $nom,
+            "email" => $email,
+            "id" => $id,
+        ]);
     }
 }

@@ -1,5 +1,5 @@
 <?php
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user"]) || ($_SESSION["role"] ?? "") !== "client") {
     header("Location: index.php?page=login");
     exit;
 }
@@ -17,6 +17,8 @@ if (empty($produits)) {
 
 try {
     $idCommande = $commandeDAO->createFromPanier($idClient, $produits);
+    header("Location: index.php?page=commande&id=" . $idCommande);
+    exit;
 } catch (Exception $e) {
     ?>
     <main class="container">
@@ -25,14 +27,4 @@ try {
         <p><a href="index.php?page=panier">Retour au panier</a></p>
     </main>
     <?php
-    return;
 }
-?>
-
-<main class="container">
-    <h1>Commande confirmée</h1>
-
-    <p>Merci, votre commande #<?= htmlspecialchars($idCommande) ?> a bien été enregistrée.</p>
-    <p><a href="index.php?page=profil">Voir mes commandes</a></p>
-    <p><a href="index.php?page=home">Retour aux produits</a></p>
-</main>

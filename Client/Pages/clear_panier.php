@@ -1,5 +1,5 @@
 <?php
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user"]) || ($_SESSION["role"] ?? "") !== "client") {
     header("Location: index.php?page=login");
     exit;
 }

@@ -1,16 +1,14 @@
 <?php
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user"]) || ($_SESSION["role"] ?? "") !== "client") {
     header("Location: index.php?page=login");
     exit;
 }
 
-$panierDAO = new PanierDAO($db);
-
-$idClient = $_SESSION["user"]["id_client"];
 $idProduit = $_GET["id"] ?? null;
 
 if ($idProduit) {
-    $idPanier = $panierDAO->getOrCreatePanier($idClient);
+    $panierDAO = new PanierDAO($db);
+    $idPanier = $panierDAO->getOrCreatePanier($_SESSION["user"]["id_client"]);
     $panierDAO->addProduct($idPanier, $idProduit);
 }
 

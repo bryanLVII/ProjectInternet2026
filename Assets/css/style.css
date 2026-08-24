@@ -72,6 +72,17 @@ button {
     margin-left: 8px;
 }
 
+.danger-link {
+    background: #b42318;
+}
+
+.admin-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0;
+}
+
 .admin-section {
     margin-top: 24px;
 }

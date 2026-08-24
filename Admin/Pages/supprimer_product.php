@@ -1,6 +1,6 @@
 <?php
 if (($_SESSION["role"] ?? "") !== "admin") {
-    exit("Accès refusé");
+    exit("Acces refuse.");
 }
 
 $id = $_GET["id"] ?? null;

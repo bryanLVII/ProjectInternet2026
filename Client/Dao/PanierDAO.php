@@ -16,8 +16,8 @@ class PanierDAO
             FROM panier
             WHERE id_client = :id
         ");
-
         $stmt->execute(["id" => $idClient]);
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -25,15 +25,15 @@ class PanierDAO
     {
         $stmt = $this->db->prepare("
             INSERT INTO panier(id_client)
-            VALUES(:id)
+            VALUES (:id)
             RETURNING id_panier
         ");
-
         $stmt->execute(["id" => $idClient]);
+
         return $stmt->fetchColumn();
     }
 
-    public function getOrCreate($idClient)
+    public function getOrCreatePanier($idClient)
     {
         $panier = $this->getPanierClient($idClient);
 
@@ -44,20 +44,14 @@ class PanierDAO
         return $this->creerPanier($idClient);
     }
 
-    public function getOrCreatePanier($idClient)
-    {
-        return $this->getOrCreate($idClient);
-    }
-
-    public function add($idPanier, $idProduit)
+    public function addProduct($idPanier, $idProduit)
     {
         $stmt = $this->db->prepare("
-            SELECT *
+            SELECT id_panier
             FROM panier_produit
             WHERE id_panier = :panier
               AND id_produit = :produit
         ");
-
         $stmt->execute([
             "panier" => $idPanier,
             "produit" => $idProduit,
@@ -83,16 +77,6 @@ class PanierDAO
         ]);
     }
 
-    public function addProduct($idPanier, $idProduit)
-    {
-        $this->add($idPanier, $idProduit);
-    }
-
-    public function ajouterProduit($idPanier, $idProduit)
-    {
-        $this->add($idPanier, $idProduit);
-    }
-
     public function getProduitsPanier($idClient)
     {
         $stmt = $this->db->prepare("
@@ -103,8 +87,8 @@ class PanierDAO
             WHERE pa.id_client = :id
             ORDER BY p.nom_produit
         ");
-
         $stmt->execute(["id" => $idClient]);
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -150,7 +134,6 @@ class PanierDAO
             WHERE pa.id_panier = pp.id_panier
               AND pa.id_client = :client
         ");
-
         $stmt->execute(["client" => $idClient]);
     }
 }

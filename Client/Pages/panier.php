@@ -1,7 +1,6 @@
 <?php
-
-if ($_SESSION["role"] !== "client") {
-    echo "Le panier est réservé aux clients.";
+if (!isset($_SESSION["user"]) || ($_SESSION["role"] ?? "") !== "client") {
+    echo "Le panier est reserve aux clients.";
     exit;
 }
 
@@ -18,7 +17,7 @@ $total = 0;
     <h1>Mon panier</h1>
 
     <?php if (empty($produits)): ?>
-        <p>Votre panier est vide</p>
+        <p>Votre panier est vide.</p>
     <?php endif; ?>
 
     <?php foreach ($produits as $p): ?>
@@ -29,11 +28,10 @@ $total = 0;
 
         <div class="cart-line">
             <h3><?= htmlspecialchars($p["nom_produit"]) ?></h3>
-
             <p>
-                Prix : <?= htmlspecialchars($p["prix"]) ?> €<br>
-                Quantité : <?= htmlspecialchars($p["quantite"]) ?><br>
-                Sous-total : <?= number_format($sousTotal, 2, ",", " ") ?> €
+                Prix : <?= htmlspecialchars($p["prix"]) ?> EUR<br>
+                Quantite : <?= htmlspecialchars($p["quantite"]) ?><br>
+                Sous-total : <?= number_format($sousTotal, 2, ",", " ") ?> EUR
             </p>
 
             <a href="index.php?page=remove_panier&id=<?= $p["id_produit"] ?>">Supprimer</a>
@@ -51,7 +49,7 @@ $total = 0;
     <?php endif; ?>
 
     <hr>
-    <h2>Total : <?= number_format($total, 2, ",", " ") ?> €</h2>
+    <h2>Total : <?= number_format($total, 2, ",", " ") ?> EUR</h2>
 
     <?php if (!empty($reco)): ?>
         <h2>Suggestions</h2>
@@ -59,7 +57,7 @@ $total = 0;
             <?php foreach ($reco as $r): ?>
                 <div class="product-card">
                     <h4><?= htmlspecialchars($r["nom_produit"]) ?></h4>
-                    <p><?= htmlspecialchars($r["prix"]) ?> €</p>
+                    <p><?= htmlspecialchars($r["prix"]) ?> EUR</p>
                     <a href="index.php?page=add_panier&id=<?= $r["id_produit"] ?>">Ajouter</a>
                 </div>
             <?php endforeach; ?>

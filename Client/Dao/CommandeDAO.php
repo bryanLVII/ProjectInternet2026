@@ -30,7 +30,7 @@ class CommandeDAO
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO commande (id_client, total, statut)
-                VALUES (:client, :total, 'confirmée')
+                VALUES (:client, :total, 'confirmee')
                 RETURNING id_commande
             ");
             $stmt->execute([
@@ -98,6 +98,22 @@ class CommandeDAO
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getByIdForClient($idCommande, $idClient)
+    {
+        $stmt = $this->db->prepare("
+            SELECT *
+            FROM commande
+            WHERE id_commande = :commande
+              AND id_client = :client
+        ");
+        $stmt->execute([
+            "commande" => $idCommande,
+            "client" => $idClient,
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getAll()
     {
         return $this->db->query("
@@ -120,5 +136,49 @@ class CommandeDAO
         $stmt->execute(["commande" => $idCommande]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function cancelForClient($idCommande, $idClient)
+    {
+        $commande = $this->getByIdForClient($idCommande, $idClient);
+
+        if (!$commande || $commande["statut"] === "annulee") {
+            return false;
+        }
+
+        $this->db->beginTransaction();
+
+        try {
+            $lignes = $this->getLines($idCommande);
+            $stockStmt = $this->db->prepare("
+                UPDATE produit
+                SET stock = stock + :quantite
+                WHERE id_produit = :produit
+            ");
+
+            foreach ($lignes as $ligne) {
+                $stockStmt->execute([
+                    "quantite" => $ligne["quantite"],
+                    "produit" => $ligne["id_produit"],
+                ]);
+            }
+
+            $stmt = $this->db->prepare("
+                UPDATE commande
+                SET statut = 'annulee'
+                WHERE id_commande = :commande
+                  AND id_client = :client
+            ");
+            $stmt->execute([
+                "commande" => $idCommande,
+                "client" => $idClient,
+            ]);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 }

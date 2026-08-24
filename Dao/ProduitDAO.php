@@ -11,28 +11,37 @@ class ProduitDAO
 
     public function getAllProduits()
     {
-        return $this->db->query("SELECT * FROM produit ORDER BY id_produit DESC")
-            ->fetchAll(PDO::FETCH_ASSOC);
+        return $this->db->query("
+            SELECT *
+            FROM produit
+            ORDER BY id_produit DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getProduitById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM produit WHERE id_produit = :id");
+        $stmt = $this->db->prepare("
+            SELECT *
+            FROM produit
+            WHERE id_produit = :id
+        ");
         $stmt->execute(["id" => $id]);
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function search($keyword)
     {
         $stmt = $this->db->prepare("
-            SELECT * FROM produit
-            WHERE nom_produit ILIKE :k
-               OR description ILIKE :k
-               OR marque ILIKE :k
+            SELECT *
+            FROM produit
+            WHERE nom_produit ILIKE :keyword
+               OR description ILIKE :keyword
+               OR marque ILIKE :keyword
             ORDER BY nom_produit
         ");
+        $stmt->execute(["keyword" => "%$keyword%"]);
 
-        $stmt->execute(["k" => "%$keyword%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -44,12 +53,13 @@ class ProduitDAO
     public function getByCategorie($id)
     {
         $stmt = $this->db->prepare("
-            SELECT * FROM produit
+            SELECT *
+            FROM produit
             WHERE id_categorie = :id
             ORDER BY nom_produit
         ");
-
         $stmt->execute(["id" => $id]);
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -61,11 +71,12 @@ class ProduitDAO
     public function getRandomProduits($limit = 3)
     {
         $stmt = $this->db->prepare("
-            SELECT * FROM produit
+            SELECT *
+            FROM produit
             ORDER BY RANDOM()
-            LIMIT :lim
+            LIMIT :limit
         ");
-        $stmt->bindValue(":lim", $limit, PDO::PARAM_INT);
+        $stmt->bindValue(":limit", $limit, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -114,18 +125,22 @@ class ProduitDAO
 
     public function delete($id)
     {
-        // 1. supprimer les avis liés
-        $stmt = $this->db->prepare("
-        DELETE FROM avis
-        WHERE id_produit = :id
-    ");
-        $stmt->execute(["id" => $id]);
+        $this->db->beginTransaction();
 
-        // 2. supprimer le produit
-        $stmt = $this->db->prepare("
-        DELETE FROM produit
-        WHERE id_produit = :id
-    ");
-        $stmt->execute(["id" => $id]);
+        try {
+            $this->db->prepare("DELETE FROM avis WHERE id_produit = :id")
+                ->execute(["id" => $id]);
+            $this->db->prepare("DELETE FROM panier_produit WHERE id_produit = :id")
+                ->execute(["id" => $id]);
+            $this->db->prepare("DELETE FROM commande_produit WHERE id_produit = :id")
+                ->execute(["id" => $id]);
+            $this->db->prepare("DELETE FROM produit WHERE id_produit = :id")
+                ->execute(["id" => $id]);
+
+            $this->db->commit();
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 }

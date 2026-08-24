@@ -21,12 +21,12 @@ if ($categorieChoisie) {
     <form method="GET">
         <input type="hidden" name="page" value="home">
         <input type="text" name="search" placeholder="Rechercher un produit..." value="<?= htmlspecialchars($search) ?>">
-        <button>Rechercher</button>
+        <button type="submit">Rechercher</button>
     </form>
 
     <hr>
 
-    <h2>Catégories</h2>
+    <h2>Categories</h2>
     <a href="index.php?page=home">Tous</a>
 
     <?php foreach ($categories as $categorie): ?>
@@ -52,7 +52,7 @@ if ($categorieChoisie) {
                     </a>
                 </h3>
 
-                <p><b><?= htmlspecialchars($p["prix"]) ?> €</b></p>
+                <p><b><?= htmlspecialchars($p["prix"]) ?> EUR</b></p>
                 <small>Stock : <?= htmlspecialchars($p["stock"]) ?></small>
 
                 <?php if (($_SESSION["role"] ?? "") !== "admin"): ?>

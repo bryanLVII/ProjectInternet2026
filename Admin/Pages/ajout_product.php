@@ -1,6 +1,6 @@
 <?php
 if (($_SESSION["role"] ?? "") !== "admin") {
-    exit("Accès refusé");
+    exit("Acces refuse.");
 }
 
 $produitDAO = new ProduitDAO($db);
@@ -23,22 +23,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <main class="container">
-    <h1>Ajouter produit</h1>
+    <h1>Ajouter un produit</h1>
 
-    <form method="POST">
+    <form method="POST" class="form-panel">
         <input name="nom" placeholder="Nom" required><br>
         <input name="desc" placeholder="Description"><br>
         <input name="prix" placeholder="Prix" type="number" step="0.01" required><br>
         <input name="stock" placeholder="Stock" type="number" required><br>
         <input name="marque" placeholder="Marque"><br>
         <select name="categorie">
-            <option value="">Sans catégorie</option>
+            <option value="">Sans categorie</option>
             <?php foreach ($categories as $categorie): ?>
                 <option value="<?= $categorie["id_categorie"] ?>">
                     <?= htmlspecialchars($categorie["nom_categorie"]) ?>
                 </option>
             <?php endforeach; ?>
         </select><br>
-        <button>Ajouter</button>
+        <button type="submit">Ajouter</button>
     </form>
 </main>
